@@ -1,24 +1,11 @@
-local http_request = syn and syn.request or request;
-
-local body = http_request({Url = 'https://httpbin.org/get', Method = 'GET'}).Body;
-local decoded = game:GetService("HttpService"):JSONDecode(body)
-local hwid = nil
-
-for header, value in pairs(decoded.headers) do
-    if string.find(header, "Fingerprint") then
-        hwid = value
-        break
-    end
-end
-
 function validatekey(hwid, key)
     if hwid == nil then
-        warn("HWID is nil.")
+        error("HWID is nil.")
     elseif key == nil then
-        warn("Key is nil.")
+        error("Key is nil.")
     end
 
-    local url = string.format("https://pandadevelopment.net/failsafeValidation?service=valeriastand&hwid=%s&key=%s", hwid, key)
+    local url = string.format("https://pandadevelopment.net/failsafeValidation?service=valeria&hwid=%s&key=%s", hwid, key)
     local response = request({
         Url = url,
         Method = "GET"
@@ -33,16 +20,26 @@ function validatekey(hwid, key)
     end
 end
 
-local function getloader()
-   loadstring(game:HttpGet("https://decrypted.cloud/scripts/killbot2.txt",true))()
-end
-
+local userhwid = gethwid()
 local key = getgenv().KeyID
+local NotificationHolder = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Module.Lua"))()
+local Notification = loadstring(game:HttpGet("https://raw.githubusercontent.com/BocusLuke/UI/main/STX/Client.Lua"))()
+local authentication = validatekey(userhwid, key)
+Notification:Notify(
+            {Title = "Valeria Killbot", Description = "Validating key..."},
+            {OutlineColor = Color3.fromRGB(255, 255, 255),Time = 5, Type = "default"}
+    )
 wait(2)
-local authentication = validatekey(hwid, key) -- Ensure local scope for the variable
-print(tostring(authentication))
 if authentication == true then
-    getloader()
+    Notification:Notify(
+            {Title = "Valeria Killbot", Description = "Validated!"},
+            {OutlineColor = Color3.fromRGB(255, 255, 255),Time = 5, Type = "default"}
+    )
+    loadstring(game:HttpGet("https://decrypted.cloud/scripts/killbot2.txt",true))()
 else
-    print("Invalid")
+    Notification:Notify(
+            {Title = "Valeria Killbot", Description = "Incorrect Key!"},
+            {OutlineColor = Color3.fromRGB(255, 255, 255),Time = 5, Type = "default"}
+    )
+    wait(2)
 end
